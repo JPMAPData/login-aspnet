@@ -9,7 +9,10 @@
 <body>
     <form id="form1" runat="server">
         <div>
-            Pagina inicial do sistema
+            <h1>Escolha o projeto pertinente entre os dispostos abaixo:</h1>
+            <%--<asp:ListBox ID="ListBox1" runat="server"></asp:ListBox>--%>
+            <asp:CheckBoxList ID="CheckBoxList1" runat="server"></asp:CheckBoxList>
+            <asp:Button ID="Button1" runat="server" Text="Upload" />
         </div>
     </form>
 </body>

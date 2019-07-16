@@ -154,3 +154,7 @@ C:\Users\joao.martins\source\repos\TutorialLogin\Login\obj\Debug\Login.csproj.Co
 C:\Users\joao.martins\source\repos\TutorialLogin\Login\obj\Debug\Login.csproj.CopyComplete
 C:\Users\joao.martins\source\repos\TutorialLogin\Login\obj\Debug\Login.dll
 C:\Users\joao.martins\source\repos\TutorialLogin\Login\obj\Debug\Login.pdb
+C:\Users\joao.martins\source\repos\TutorialLogin\Login\bin\Autodesk.Forge.dll
+C:\Users\joao.martins\source\repos\TutorialLogin\Login\bin\Newtonsoft.Json.dll
+C:\Users\joao.martins\source\repos\TutorialLogin\Login\bin\RestSharp.dll
+C:\Users\joao.martins\source\repos\TutorialLogin\Login\bin\Newtonsoft.Json.xml
