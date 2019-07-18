@@ -158,3 +158,5 @@ C:\Users\joao.martins\source\repos\TutorialLogin\Login\bin\Autodesk.Forge.dll
 C:\Users\joao.martins\source\repos\TutorialLogin\Login\bin\Newtonsoft.Json.dll
 C:\Users\joao.martins\source\repos\TutorialLogin\Login\bin\RestSharp.dll
 C:\Users\joao.martins\source\repos\TutorialLogin\Login\bin\Newtonsoft.Json.xml
+C:\Users\joao.martins\source\repos\TutorialLogin\Login\bin\MAPDataForge.dll
+C:\Users\joao.martins\source\repos\TutorialLogin\Login\bin\MAPDataForge.pdb

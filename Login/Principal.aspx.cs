@@ -1,6 +1,7 @@
 ﻿using Autodesk.Forge;
 using Autodesk.Forge.Client;
 using Autodesk.Forge.Model;
+using MAPDataForge.Classes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,76 +16,84 @@ namespace Login
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["Usuario"] == null)
-                Response.Redirect("Login.aspx");
+            //if (Session["Usuario"] == null)
+            //    Response.Redirect("Login.aspx");
 
-            string clientID = "Dm1AJ95famLKnf4MUOGpwO7zJIcBF4J7";
-            string clientSecret = "V050fdb1761e4460";
-
-            TwoLeggedApi _twoLeggedApi = new TwoLeggedApi();
-
-            var retorno = _twoLeggedApi.Authenticate(clientID, clientSecret, oAuthConstants.CLIENT_CREDENTIALS, new Scope[] { Scope.DataRead, Scope.DataCreate, Scope.DataWrite, Scope.ViewablesRead });
-
-            //Task<ApiResponse<dynamic>> retorno = _twoLeggedApi.AuthenticateAsyncWithHttpInfo(clientID, clientSecret, oAuthConstants.CLIENT_CREDENTIALS, new Scope[] { Scope.DataRead, Scope.DataCreate, Scope.DataWrite, Scope.ViewablesRead });
-
-            //if (retorno.Result.StatusCode < 200 || retorno.Result.StatusCode >= 300)
-            //{
-            //    throw new Exception("Erro de CONEXAO");
-            //}
-
-            string token;
-
-            token = retorno["access_token"];
-
-            HubsApi hubsApi = new HubsApi();
-            hubsApi.Configuration.AccessToken = token;
-
-            Dictionary<string, string> pastas = new Dictionary<string, string>();
-
-            var hubs = hubsApi.GetHubs();
-
-            foreach (KeyValuePair<string, dynamic> hubtInfo in new DynamicDictionaryItems(hubs.data))
+            if (!Page.IsPostBack)
             {
-                ProjectsApi projectsApi = new ProjectsApi();
-                var projects = projectsApi.GetHubProjects(hubtInfo.Value.id);
-                foreach (KeyValuePair<string, dynamic> projectInfo in new DynamicDictionaryItems(projects.data))
+                string clientID = "Dm1AJ95famLKnf4MUOGpwO7zJIcBF4J7";
+                string clientSecret = "V050fdb1761e4460";
+                if (MAPDataForge.Global.Token.Validade < DateTime.Now) MAPDataForge.Global.GenetrateToken(clientID, clientSecret);
+
+                Dictionary<string, string> pastas = new Dictionary<string, string>();
+
+                var hubs = MAPDataForge.MAPBIM360.GetHubs();
+
+                if (hubs.Count != 1) throw new Exception("Mais de um hub retornado");
+
+                Global.HubID = hubs[0].ID;
+
+                foreach (Projeto projectInfo in MAPDataForge.MAPBIM360.GetProjects(Global.HubID))
                 {
-                    //ListBox1.Items.Add(projectInfo.Value.attributes.name);
-                    ListItem projeto = new ListItem("Projeto "+projectInfo.Value.attributes.name, projectInfo.Value.id);
-                    CheckBoxList1.Items.Add(projeto);
+                    treProjetos.Nodes.Add(new TreeNode(projectInfo.Nome, projectInfo.ID));
+                }
 
-                    var folders = projectsApi.GetProjectTopFolders(hubtInfo.Value.id, projectInfo.Value.id);
-                  
-                    foreach (KeyValuePair<string, dynamic> folder in new DynamicDictionaryItems(folders.data))
-                    {
-                        if (folder.Value.type == "folders")
-                        {
-                            ListItem pasta = new ListItem("Pasta " + folder.Value.attributes.name, folder.Value.id);
-                            CheckBoxList1.Items.Add(pasta);
-                            addFolders(pasta);
-                        }
-                    }
+            }
+        }
 
-                    void addFolders(ListItem pastam)
-                    {
-                        var folders_inside = projectsApi.GetProjectTopFolders(hubtInfo.Value.id, projectInfo.Value.id);
-
-                        foreach (KeyValuePair<string, dynamic> folder_inside in new DynamicDictionaryItems(folders_inside.data))
-                        {
-                            if (folder_inside.Value.type == "folders")
-                            {
-                                ListItem pasta_inside = new ListItem("Pasta " + folder_inside.Value.attributes.name, folder_inside.Value.id);
-                                CheckBoxList1.Items.Add(pasta_inside);
-                                addFolders(pasta_inside);
-                            }
-                        }
-
-                    }
-
+        protected void treProjetos_SelectedNodeChanged(object sender, EventArgs e)
+        {
+            if (treProjetos.SelectedNode.Depth == 0)
+            {
+                string projectID = treProjetos.SelectedNode.Value;
+                var folders = MAPDataForge.MAPBIM360.GetTopFolders(Global.HubID, projectID);
+                foreach (var folder in folders)
+                {
+                    treProjetos.SelectedNode.ChildNodes.Add(new TreeNode(folder.Nome, projectID + "|" + folder.ID));
                 }
             }
-
-
+            else
+            {
+                string[] IDs = treProjetos.SelectedNode.Value.Split('|');
+                var folders = MAPDataForge.MAPBIM360.GetFolders(IDs[0],IDs[1]);
+                foreach (var folder in folders)
+                {
+                    treProjetos.SelectedNode.ChildNodes.Add(new TreeNode(folder.Nome, IDs[0] + "|" + folder.ID));
+                }
+            }
         }
+
+
+        //    //ListBox1.Items.Add(projectInfo.Value.attributes.name);
+        //    ListItem projeto = new ListItem("Projeto "+projectInfo.Value.attributes.name, projectInfo.Value.id);
+        //    CheckBoxList1.Items.Add(projeto);
+
+        //    var folders = projectsApi.GetProjectTopFolders(hubtInfo.ID, projectInfo.Value.id);
+
+        //    foreach (KeyValuePair<string, dynamic> folder in new DynamicDictionaryItems(folders.data))
+        //    {
+        //        if (folder.Value.type == "folders")
+        //        {
+        //            ListItem pasta = new ListItem("Pasta " + folder.Value.attributes.name, folder.Value.id);
+        //            CheckBoxList1.Items.Add(pasta);
+        //            addFolders(pasta);
+        //        }
+        //    }
+
+        //void addFolders(ListItem pastam)
+        //{
+        //    var folders_inside = projectsApi.GetProjectTopFolders(hubtInfo.Value.id, projectInfo.Value.id);
+
+        //    foreach (KeyValuePair<string, dynamic> folder_inside in new DynamicDictionaryItems(folders_inside.data))
+        //    {
+        //        if (folder_inside.Value.type == "folders")
+        //        {
+        //            ListItem pasta_inside = new ListItem("Pasta " + folder_inside.Value.attributes.name, folder_inside.Value.id);
+        //            CheckBoxList1.Items.Add(pasta_inside);
+        //            addFolders(pasta_inside);
+        //        }
+        //    }
+
+        //}
     }
 }

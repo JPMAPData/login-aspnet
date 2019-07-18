@@ -1,4 +1,6 @@
-﻿using MAPDataClassLib.DAO;
+﻿using Autodesk.Forge;
+using Autodesk.Forge.Model;
+using MAPDataClassLib.DAO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +10,7 @@ namespace Login
 {
     public static class Global
     {
+        // Properties
         public static bool DbInicializado { get; set; }
 
         public static void InicializarDb()
@@ -20,5 +23,8 @@ namespace Login
                 DbInicializado = true;
             }
         }
+
+        public static string HubID { get; set; }
     }
+
 }

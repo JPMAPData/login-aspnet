@@ -119,6 +119,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\MAPDataForge\MAPDataForge\MAPDataForge.csproj">
+      <Project>{5254945b-535f-45a6-9d45-155d2aaa53a2}</Project>
+      <Name>MAPDataForge</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TutorialLoginDAO\TutorialLoginDAO.csproj">
       <Project>{f94e927b-b923-41d0-acc5-2ee57f412beb}</Project>
       <Name>TutorialLoginDAO</Name>
